@@ -1,5 +1,4 @@
 import os
-from functions.config import MAX_CHARS
 
 def get_files_info(working_directory, directory="."):
     abs_work = os.path.abspath(working_directory)
