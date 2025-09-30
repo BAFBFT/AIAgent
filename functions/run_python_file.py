@@ -12,11 +12,11 @@ schema_run_python_file = types.FunctionDeclaration(
             "file_path": types.Schema(
                 type=types.Type.STRING,
                 description="The .py file, relative to the working directory.",
-                required=True
             ),
             "args": types.Schema(
                 type=types.Type.ARRAY,
                 description="The args to pass to the .py file",
+                items=types.Schema(type=types.Type.STRING),
             ),
         },
     ),
@@ -37,7 +37,7 @@ def run_python_file(working_directory, file_path, args=[]):
     try:
         commands = [sys.executable, abs_target]
         process = subprocess.run(
-            args= commands.extend(args), 
+            commands.extend(args) if args else commands, 
             capture_output=True, 
             text=True,
             timeout=30,

@@ -1,10 +1,11 @@
 import os
 import sys
 from dotenv import load_dotenv
+from functions.call_function import call_function
 from functions.get_files_info import schema_get_files_info
 from functions.get_file_content import schema_get_file_content
-from functions.write_file import schema_write_file
 from functions.run_python_file import schema_run_python_file
+from functions.write_file import schema_write_file
 from google import genai
 from google.genai import types
 
@@ -69,8 +70,13 @@ def main():
         return response.text
 
     for function_call_part in response.function_calls:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+        function_call_result = call_function(function_call_part, verbose)
+        if not function_call_result.parts[0].function_response.response:
+            raise Exception("No response found.")
+        elif function_call_result.parts[0].function_response.response and verbose:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
 
+    
     if verbose:
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
